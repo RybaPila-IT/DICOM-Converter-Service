@@ -2,3 +2,5 @@ fastapi~=0.76.0
 numpy~=1.22.3
 pydicom~=2.2.2
 Pillow~=8.4.0
+pydantic~=1.9.0
+python-dotenv~=0.20.0

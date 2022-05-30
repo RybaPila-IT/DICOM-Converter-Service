@@ -4,7 +4,19 @@ from compression.methods.lz_string import LZString
 
 
 class Decompressor:
+    """
+    Class responsible for decompressing the submitted image bytes.
 
+    Since DICOM data is compressed in order to reduce it size (from MB to KB magnitude)
+    the decompression of the submitted data must be performed prior to
+    conversion method.
+
+    Decompressor performs also base64 decoding if the submitted data was originally
+    encoded in base64 (DICOM data encoded in base64 before compression).
+
+    IMPORTANT:  Data after compression must be encoded in base64 and decompression methods
+                should take this into account.
+    """
     allowed_compression_methods = {
         'lz': lambda: Decompressor.lz_decompress
     }
