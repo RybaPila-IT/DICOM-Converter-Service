@@ -11,9 +11,9 @@ from compression.decompressor import Decompressor
 
 
 class Request(BaseModel):
-    compression_method: str
-    compressed_data: str
-    is_encoded: bool
+    compression: str
+    data: str
+    encoded: bool
 
 
 ACCESS_TOKEN_ENV_KEY = 'ACCESS_TOKEN'
@@ -36,6 +36,7 @@ async def convert(req: Request,
     decompressed_data = __decompress(req)
     converted_data = __convert(decompressed_data)
     encoded_data = __encode(converted_data)
+    # Finish of the endpoint.
     return {
         'data': encoded_data
     }
@@ -48,12 +49,12 @@ def __valid_credentials(credentials: str) -> bool:
 def __decompress(req: Request) -> bytes:
     try:
         return Decompressor.decompress(
-            req.compressed_data,
-            req.compression_method,
-            req.is_encoded
+            req.data,
+            req.compression,
+            req.encoded
         )
     except NotImplementedError:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, f'{req.compression_method} compression is not supported')
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, f'{req.compression} compression is not supported')
     except Exception as e:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f'Decompression error: {e}')
 
@@ -70,4 +71,3 @@ def __encode(data: bytes) -> bytes:
         return base64.b64encode(data)
     except Exception as e:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f'Base64 encoding error: {e}')
-

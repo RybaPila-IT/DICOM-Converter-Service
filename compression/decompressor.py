@@ -1,5 +1,4 @@
 import base64
-import io
 
 from compression.methods.lz_string import LZString
 
@@ -35,4 +34,8 @@ class Decompressor:
 
     @staticmethod
     def lz_decompress(compressed: str) -> str:
-        return LZString.decompressFromBase64(compressed)
+        decompressed = LZString.decompressFromBase64(compressed)
+        # The LZ method may not signal error on its own, so we check if we performed the decompression.
+        if not decompressed:
+            raise Exception('Corrupted compressed data')
+        return decompressed
