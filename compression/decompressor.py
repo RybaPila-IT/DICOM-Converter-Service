@@ -1,4 +1,5 @@
 import base64
+import io
 
 from compression.methods.lz_string import LZString
 
@@ -28,7 +29,7 @@ class Decompressor:
         # Decompress the data accordingly to allowed compression method.
         decompressed_data = decompress_method()(compressed_bytes)
         # Perform optional final base64 decoding.
-        return decompressed_data \
+        return decompressed_data.encode() \
             if not is_encoded \
             else base64.b64decode(decompressed_data)
 
