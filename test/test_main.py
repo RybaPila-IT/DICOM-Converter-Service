@@ -58,7 +58,7 @@ def test_invalid_compressed_data_request():
 
 
 def test_invalid_compression_method_request():
-    with open('data/valid_base64_lz_compressed_dcm.txt') as f:
+    with open('test/data/valid_base64_lz_compressed_dcm.txt') as f:
         data = f.read()
 
     resp = client.post(
@@ -77,7 +77,7 @@ def test_invalid_compression_method_request():
 
 
 def test_valid_request():
-    with open('data/valid_base64_lz_compressed_dcm.txt') as f:
+    with open('test/data/valid_base64_lz_compressed_dcm.txt') as f:
         data = f.read()
 
     resp = client.post(
