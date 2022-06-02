@@ -27,6 +27,13 @@ decompressor = Decompressor()
 converter = Converter()
 
 
+@app.get("/")
+async def main() -> dict:
+    return {
+        'message': 'Welcome to DICOM Converter Service'
+    }
+
+
 @app.post("/convert")
 async def convert(req: Request,
                   credentials: HTTPAuthorizationCredentials = Security(security)) -> dict:
