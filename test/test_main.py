@@ -18,7 +18,7 @@ def test_unauthorized_request():
         json={
             'encoded': True,
             'compression': 'lz',
-            'data': 'HelloWorld!'
+            'image': 'HelloWorld!'
         }
     )
 
@@ -34,7 +34,7 @@ def test_invalid_access_token_request():
         json={
             'encoded': True,
             'compression': 'lz',
-            'data': 'HelloWorld!'
+            'image': 'HelloWorld!'
         }
     )
 
@@ -50,7 +50,7 @@ def test_invalid_compressed_data_request():
         json={
             'encoded': True,
             'compression': 'lz',
-            'data': 'HelloWorld'
+            'image': 'HelloWorld'
         }
     )
 
@@ -69,7 +69,7 @@ def test_invalid_compression_method_request():
         json={
             'encoded': True,
             'compression': 'unknown',
-            'data': data
+            'image': data
         }
     )
 
@@ -88,10 +88,13 @@ def test_valid_request():
         json={
             'encoded': True,
             'compression': 'lz',
-            'data': data
+            'image': data
         }
     )
     resp_body = json.loads(resp.content.decode())
 
     assert resp.status_code == status.HTTP_200_OK
-    assert resp_body.get('data') is not None
+    assert resp_body.get('image') is not None
+    assert resp_body.get('attributes') is not None
+    assert resp_body.get('attributes').get('row_spacing') is not None
+    assert resp_body.get('attributes').get('column_spacing') is not None
