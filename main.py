@@ -11,14 +11,16 @@ from conversion.converter import Converter
 from compression.decompressor import Decompressor
 from attributes.reader import AttributesReader
 
-# Setting up the logger.
-logging.basicConfig(level=logging.INFO)
-
 
 class Request(BaseModel):
     compression: str
-    data: str
+    image: str
     encoded: bool
+
+
+class Response(BaseModel):
+    image: str
+    attributes: dict
 
 
 ACCESS_TOKEN_ENV_KEY = 'ACCESS_TOKEN'
@@ -41,8 +43,7 @@ async def main() -> dict:
 
 
 @app.post('/convert')
-async def convert(req: Request,
-                  credentials: HTTPAuthorizationCredentials = Security(security)) -> dict:
+async def convert(req: Request, credentials: HTTPAuthorizationCredentials = Security(security)):
     if not __valid_credentials(credentials.credentials):
         raise HTTPException(status.HTTP_403_FORBIDDEN, 'Invalid access token')
     # Start of the conversion pipeline.
@@ -52,11 +53,10 @@ async def convert(req: Request,
     # Read the pixel spacing attribute, necessary by some micro-services.
     attributes = __read_attributes(decompressed_data)
     # Finish of the endpoint.
-    logging.info('Successfully converted submitted image and fetched its attributes')
-    return {
-        'image': encoded_data,
-        'attributes': attributes
-    }
+    return Response(
+        image=encoded_data,
+        attributes=attributes
+    )
 
 
 def __valid_credentials(credentials: str) -> bool:
@@ -66,7 +66,7 @@ def __valid_credentials(credentials: str) -> bool:
 def __decompress(req: Request) -> bytes:
     try:
         return Decompressor.decompress(
-            req.data,
+            req.image,
             req.compression,
             req.encoded
         )
@@ -96,9 +96,11 @@ def __encode(data: bytes) -> bytes:
 
 def __read_attributes(data: bytes) -> dict:
     try:
+        pixel_spacing = AttributesReader.read_pixel_spacing(io.BytesIO(data))
         return {
-            'pixel_spacing': AttributesReader.read_pixel_spacing(io.BytesIO(data))
+            'row_spacing': pixel_spacing[0],
+            'column_spacing': pixel_spacing[1]
         }
     except Exception as e:
         logging.error(f'Reading attributes error: {e}')
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, 'Error while reading DICOM attributes occurred')
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, 'Error while reading DICOM attributes occurred')
