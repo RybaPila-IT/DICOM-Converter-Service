@@ -1,6 +1,5 @@
 import io
 import typing
-
 import numpy as np
 import pydicom
 from PIL import Image
@@ -19,15 +18,3 @@ class Converter:
         im.save(img_byte_arr, 'PNG')
         img_byte_arr = img_byte_arr.getvalue()
         return img_byte_arr
-
-
-# if __name__ == '__main__':
-#     with open('base64_encoded_compressed_frontend.txt') as f:
-#         content = f.read()
-#         decompressed = LZString.decompressFromBase64(content)
-#         im = pydicom.dcmread(io.BytesIO(base64.b64decode(decompressed)), force=True)
-#         im = im.pixel_array.astype(float)
-#         rescaled = (np.maximum(im, 0) / im.max()) * 255
-#         final = np.uint8(rescaled)
-#         final_image = Image.fromarray(final)
-#         final_image.show()
