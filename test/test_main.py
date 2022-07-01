@@ -94,7 +94,7 @@ def test_valid_request():
     resp_body = json.loads(resp.content.decode())
 
     assert resp.status_code == status.HTTP_200_OK
-    assert resp_body.get('image') is not None
+    assert resp_body.get('photo') is not None
     assert resp_body.get('attributes') is not None
     assert resp_body.get('attributes').get('row_spacing') is not None
     assert resp_body.get('attributes').get('column_spacing') is not None

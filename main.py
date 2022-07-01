@@ -19,7 +19,7 @@ class Request(BaseModel):
 
 
 class Response(BaseModel):
-    image: str
+    photo: str
     attributes: dict
 
 
@@ -54,7 +54,7 @@ async def convert(req: Request, credentials: HTTPAuthorizationCredentials = Secu
     attributes = __read_attributes(decompressed_data)
     # Finish of the endpoint.
     return Response(
-        image=encoded_data,
+        photo=encoded_data,
         attributes=attributes
     )
 
