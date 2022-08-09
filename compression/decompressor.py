@@ -1,6 +1,7 @@
 import base64
 
-from compression.methods.lz_string import LZString
+from compression.methods.lzw import LZWDecompress
+from compression.methods.no_operation import NoCompression
 
 
 class Decompressor:
@@ -18,8 +19,8 @@ class Decompressor:
                 should take this into account.
     """
     allowed_compression_methods = {
-        'none': lambda: Decompressor.no_decompress,
-        'lz': lambda: Decompressor.lz_decompress
+        'none': NoCompression,
+        'lz': LZWDecompress
     }
 
     @staticmethod
@@ -27,21 +28,8 @@ class Decompressor:
         if (decompress_method := Decompressor.allowed_compression_methods.get(method)) is None:
             raise NotImplementedError
         # Decompress the data accordingly to allowed compression method.
-        decompressed_data = decompress_method()(compressed)
+        decompressed_data = decompress_method.decompress(compressed)
         # Perform optional final base64 decoding.
         return decompressed_data.encode() \
             if not is_encoded \
             else base64.b64decode(decompressed_data)
-
-    @staticmethod
-    def lz_decompress(compressed: str) -> str:
-        decompressed = LZString.decompressFromBase64(compressed)
-        # The LZ method may not signal error on its own, so we check if we performed the decompression.
-        if not decompressed:
-            raise Exception('Corrupted compressed data')
-        return decompressed
-
-    @staticmethod
-    def no_decompress(compressed: str) -> str:
-        # Indicates that there is no compression method involved.
-        return compressed

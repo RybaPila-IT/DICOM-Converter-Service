@@ -65,11 +65,7 @@ def __valid_credentials(credentials: str) -> bool:
 
 def __decompress(req: Request) -> bytes:
     try:
-        return Decompressor.decompress(
-            req.image,
-            req.compression,
-            req.encoded
-        )
+        return Decompressor.decompress(req.image, req.compression, req.encoded)
     except NotImplementedError:
         logging.error(f'Decompress: {req.compression} compression is not supported')
         raise HTTPException(status.HTTP_400_BAD_REQUEST, f'{req.compression} compression is not supported')
@@ -96,11 +92,7 @@ def __encode(data: bytes) -> bytes:
 
 def __read_attributes(data: bytes) -> dict:
     try:
-        pixel_spacing = AttributesReader.read_pixel_spacing(io.BytesIO(data))
-        return {
-            'row_spacing': pixel_spacing[0],
-            'column_spacing': pixel_spacing[1]
-        }
+        return AttributesReader.read_attributes(io.BytesIO(data))
     except Exception as e:
         logging.error(f'Reading attributes error: {e}')
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, 'Error while reading DICOM attributes occurred')

@@ -7,6 +7,9 @@ class AttributesReader:
     Class enabling to read attributes of DICOM image provided as BinaryIO.
     """
     @staticmethod
-    def read_pixel_spacing(dcm_decompressed_bytes: typing.BinaryIO) -> list[float]:
+    def read_attributes(dcm_decompressed_bytes: typing.BinaryIO) -> dict:
         with pydicom.dcmread(dcm_decompressed_bytes, force=True) as im:
-            return im.PixelSpacing
+            return {
+                'pixel_spacing': [im.PixelSpacing[0], im.PixelSpacing[1]],
+                'image_size': [im.Columns, im.Rows]
+            }

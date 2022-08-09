@@ -1,3 +1,22 @@
+from compression.method import Method
+
+
+class LZWDecompress(Method):
+    @staticmethod
+    def decompress(compressed: str) -> str:
+        """
+        Implementation of the LZW decompression algorithm.
+
+        :param compressed: string of compressed bytes.
+        :return: string containing the uncompressed bytes.
+        """
+        decompressed = LZString.decompressFromBase64(compressed)
+        # The LZ method may not signal error on its own, so we check if we performed the decompression.
+        if not decompressed:
+            raise Exception('Corrupted compressed data')
+        return decompressed
+
+
 """
 Copyright © 2017 Marcel Dancak <dancakm@gmail.com>
 This work is free. You can redistribute it and/or modify it under the
