@@ -10,6 +10,6 @@ class AttributesReader:
     def read_attributes(dcm_decompressed_bytes: typing.BinaryIO) -> dict:
         with pydicom.dcmread(dcm_decompressed_bytes, force=True) as im:
             return {
-                'pixel_spacing': [im.PixelSpacing[0], im.PixelSpacing[1]],
+                'pixel_spacing': im.PixelSpacing[0],
                 'image_size': [im.Columns, im.Rows]
             }
